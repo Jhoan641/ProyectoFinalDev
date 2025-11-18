@@ -15,7 +15,7 @@ pipeline {
             steps {
                 git branch: 'develop',
                     credentialsId: 'github-token',
-                    url: 'https://github.com/TU_USUARIO/crud_usuarios.git'
+                    url: 'https://github.com/Jhoan641/crud_usuarios.git'
             }
         }
 
