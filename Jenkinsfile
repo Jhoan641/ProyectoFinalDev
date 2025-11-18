@@ -5,13 +5,17 @@ pipeline {
         python 'Python3'
     }
 
+    environment {
+        scannerHome = tool 'sonar-scanner'
+    }
+
     stages {
 
         stage('Checkout') {
             steps {
-                git credentialsId: 'github-token',
-                    url: 'https://github.com/TU_USUARIO/crud_usuarios.git',
-                    branch: 'develop'
+                git branch: 'develop',
+                    credentialsId: 'github-token',
+                    url: 'https://github.com/TU_USUARIO/crud_usuarios.git'
             }
         }
 
@@ -35,9 +39,6 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-            environment {
-                scannerHome = tool 'sonar-scanner'
-            }
             steps {
                 withSonarQubeEnv('SonarQube') {
                     sh '''
@@ -45,6 +46,22 @@ pipeline {
                     ${scannerHome}/bin/sonar-scanner
                     '''
                 }
+            }
+        }
+
+        stage('Docker Build & Deploy to Kubernetes') {
+            steps {
+                sh '''
+                echo "Building Docker image..."
+                docker build -t crud-usuarios:latest .
+
+                echo "Loading image into Minikube..."
+                minikube image load crud-usuarios:latest
+
+                echo "Applying Kubernetes manifests..."
+                kubectl apply -f k8s/deployment.yaml
+                kubectl apply -f k8s/service.yaml
+                '''
             }
         }
     }

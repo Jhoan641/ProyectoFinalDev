@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crud-usuarios
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crud-usuarios
+  template:
+    metadata:
+      labels:
+        app: crud-usuarios
+    spec:
+      containers:
+      - name: crud-usuarios
+        image: crud-usuarios:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+
