@@ -26,7 +26,8 @@ pipeline {
             steps {
                 sh '''
                 . venv/bin/activate
-                python manage.py test
+                python crud_usuarios/manage.py test
+
                 '''
             }
         }
