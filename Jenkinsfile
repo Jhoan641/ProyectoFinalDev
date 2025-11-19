@@ -1,21 +1,13 @@
 pipeline {
     agent any
 
-    tools {
-        python 'Python3'
-    }
-
-    environment {
-        scannerHome = tool 'sonar-scanner'
-    }
-
     stages {
 
         stage('Checkout') {
             steps {
-                git branch: 'develop',
-                    credentialsId: 'github-token',
-                    url: 'https://github.com/Jhoan641/ProyectoFinalDev.git'
+                git credentialsId: 'github-token',
+                    url: 'https://github.com/Jhoan641/ProyectoFinalDev.git',
+                    branch: 'develop'
             }
         }
 
@@ -39,6 +31,9 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
+            environment {
+                scannerHome = tool 'sonar-scanner'
+            }
             steps {
                 withSonarQubeEnv('SonarQube') {
                     sh '''
@@ -49,7 +44,7 @@ pipeline {
             }
         }
 
-        stage('Docker Build & Deploy to Kubernetes') {
+        stage('Deploy to Kubernetes') {
             steps {
                 sh '''
                 echo "Building Docker image..."
